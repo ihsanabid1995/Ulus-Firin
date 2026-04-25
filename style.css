@@ -6,6 +6,11 @@
   --color-dark: #1a1a1a;
   --color-gray: #6c757d;
   --color-white: #ffffff;
+  --color-error: #e74c3c;
+  --color-success: #27ae60;
+  --color-light-gray: #f8f8f8;
+  --color-border: #ddd;
+  --color-border-light: #eee;
   --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   --transition: all 0.3s ease;
   --border-radius: 8px;
@@ -203,6 +208,10 @@ header.scrolled .hamburger-menu { color: var(--color-secondary); }
   flex-direction: column; 
   align-items: center; }
 
+address {
+  font-style: normal;
+}
+
 .map-container { 
   width: 100%; 
   max-width: 800px; 
@@ -277,9 +286,9 @@ footer {
   opacity: 1; 
   transform: translateY(0); }
 
-.active-link { color: var(--color-primary) !important; }
+.navbar .nav-links a.active-link { color: var(--color-primary); }
 
-.active-link::after { width: 100% !important; }
+.navbar .nav-links a.active-link::after { width: 100%; }
 
 .menu-tab-bar { 
   display: flex; 
@@ -305,7 +314,7 @@ footer {
 
 .menu-tab:hover, .menu-tab-active { 
   background: var(--color-primary); 
-  color: #fff; }
+  color: var(--color-white); }
 
 .product-card-body { 
   padding: 16px 20px 20px; 
@@ -341,7 +350,7 @@ footer {
   border: none; 
   border-radius: 20px; 
   background: var(--color-primary); 
-  color: #fff; 
+  color: var(--color-white); 
   font-weight: 600; 
   font-size: 0.85rem; 
   cursor: pointer; 
@@ -369,7 +378,7 @@ footer {
   height: 60px; 
   border-radius: 50%; 
   background: var(--color-primary); 
-  color: #fff; 
+  color: var(--color-white); 
   border: none; 
   font-size: 1.4rem; 
   cursor: pointer; 
@@ -388,14 +397,18 @@ footer {
   position: absolute; 
   top: -4px; right: -4px; width: 22px; height: 22px; 
   border-radius: 50%; 
-  background: #e74c3c; 
-  color: #fff; 
+  background: var(--color-error); 
+  color: var(--color-white); 
   font-size: 0.7rem; 
   font-weight: 700; 
-  display: flex; 
+  display: none; 
   align-items: center; 
   justify-content: center; }
- 
+
+#cart-badge.show {
+  display: flex;
+}
+  
 #cart-overlay { 
   position: fixed; 
   inset: 0; 
@@ -414,7 +427,7 @@ footer {
   top: 0; right: -420px; width: 400px; 
   max-width: 90vw; 
   height: 100vh; 
-  background: #fff; 
+  background: var(--color-white); 
   z-index: 3000; 
   box-shadow: -5px 0 30px rgba(0,0,0,0.15); 
   transition: right 0.3s ease; 
@@ -428,7 +441,7 @@ footer {
   justify-content: space-between; 
   align-items: center; 
   padding: 20px 24px; 
-  border-bottom: 1px solid #eee; }
+  border-bottom: 1px solid var(--color-border-light); }
 
 .cart-header h3 { 
   font-size: 1.3rem; 
@@ -490,8 +503,8 @@ footer {
   width: 28px; 
   height: 28px; 
   border-radius: 50%; 
-  border: 1px solid #ddd; 
-  background: #f8f8f8; 
+  border: 1px solid var(--color-border); 
+  background: var(--color-light-gray); 
   cursor: pointer; 
   display: flex; 
   align-items: center; 
@@ -507,14 +520,14 @@ footer {
 .remove-btn { 
   background: none; 
   border: none; 
-  color: #e74c3c; 
+  color: var(--color-error); 
   cursor: pointer; 
   font-size: 0.85rem; 
   margin-left: auto; }
 
 .cart-footer { 
   padding: 20px 24px; 
-  border-top: 1px solid #eee; }
+  border-top: 1px solid var(--color-border-light); }
 
 .cart-total { 
   display: flex; 
@@ -560,7 +573,7 @@ footer {
   cursor: pointer; }
 
 .order-modal-content { 
-  background: #fff; 
+  background: var(--color-white); 
   border-radius: 16px; 
   padding: 36px; 
   max-width: 500px; 
@@ -605,7 +618,7 @@ footer {
 .form-group input { 
   width: 100%; 
   padding: 10px; 
-  border: 1px solid #ddd; 
+  border: 1px solid var(--color-border); 
   border-radius: var(--border-radius); 
   font-size: 0.95rem; 
   font-family: inherit;}
@@ -622,7 +635,7 @@ footer {
   font-size: 0.9rem;}
 
 .success-modal-content { 
-  background: #fff; 
+  background: var(--color-white); 
   border-radius: 16px; 
   padding: 40px; 
   text-align: center; 
@@ -635,7 +648,7 @@ footer {
 
 .success-icon { 
   font-size: 4rem; 
-  color: #27ae60; 
+  color: var(--color-success); 
   margin-bottom: 15px; }
 
 .success-modal-content h2 { 
@@ -652,7 +665,7 @@ footer {
   left: 50%; 
   transform: translateX(-50%) translateY(20px); 
   background: var(--color-secondary); 
-  color: #fff; 
+  color: var(--color-white); 
   padding: 12px 24px; 
   border-radius: 30px; 
   font-size: 0.9rem; 
@@ -665,7 +678,7 @@ footer {
   opacity: 1; 
   transform: translateX(-50%) translateY(0); }
 
-.toast.toast-error { background: #e74c3c; }
+.toast.toast-error { background: var(--color-error); }
 
 @media (max-width: 992px) {
   .hero-title { font-size: 3rem; }
