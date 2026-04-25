@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const btn = document.createElement("button");
             btn.className = "menu-tab";
             if (index === 0) btn.classList.add("menu-tab-active");
-            btn.innerText = category;
+            btn.textContent = category;
             
             btn.addEventListener("click", function() {
                 document.querySelectorAll(".menu-tab").forEach(function(b) {
@@ -82,42 +82,69 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function renderGrid(categoryName) {
-        gridContainer.innerHTML = "";
+        gridContainer.textContent = "";
         const items = menuData[categoryName];
 
         items.forEach(function(item) {
-            let imageHTML = "";
-            if (item.img !== "") {
-                imageHTML = `<img class="product-card-image" src="${item.img}" alt="${item.name}">`;
-            } else {
-                imageHTML = `<div class="product-card-placeholder">☕</div>`;
-            }
-
             const card = document.createElement("div");
             card.className = "product-card fade-in visible";
             
-            card.innerHTML = `
-                ${imageHTML}
-                <div class="product-card-body">
-                    <h3 class="product-card-name">${item.name}</h3>
-                    <p class="product-card-desc">${item.desc}</p>
-                    <div class="product-card-footer">
-                        <span class="product-card-price">₺${item.price}</span>
-                        <button class="add-to-cart-btn">Ekle</button>
-                    </div>
-                </div>
-            `;
+            if (item.img !== "") {
+                const img = document.createElement("img");
+                img.className = "product-card-image";
+                img.src = item.img;
+                img.alt = item.name;
+                card.appendChild(img);
+            } else {
+                const placeholder = document.createElement("div");
+                placeholder.className = "product-card-placeholder";
+                placeholder.textContent = "☕";
+                card.appendChild(placeholder);
+            }
 
-            const addButton = card.querySelector(".add-to-cart-btn");
+            const bodyDiv = document.createElement("div");
+            bodyDiv.className = "product-card-body";
+
+            const title = document.createElement("h3");
+            title.className = "product-card-name";
+            title.textContent = item.name;
+
+            const desc = document.createElement("p");
+            desc.className = "product-card-desc";
+            desc.textContent = item.desc;
+
+            const footerDiv = document.createElement("div");
+            footerDiv.className = "product-card-footer";
+
+            const priceSpan = document.createElement("span");
+            priceSpan.className = "product-card-price";
+            priceSpan.textContent = "₺" + item.price;
+
+            const addButton = document.createElement("button");
+            addButton.className = "add-to-cart-btn";
+            addButton.textContent = "Ekle";
+            
             addButton.addEventListener("click", function() {
                 addToCart(item);
             });
 
+            footerDiv.appendChild(priceSpan);
+            footerDiv.appendChild(addButton);
+
+            bodyDiv.appendChild(title);
+            bodyDiv.appendChild(desc);
+            bodyDiv.appendChild(footerDiv);
+
+            card.appendChild(bodyDiv);
             gridContainer.appendChild(card);
         });
     }
 
     let cart = []; 
+    const savedCart = localStorage.getItem("ulusFirinCart");
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+    }
     
     const cartFloatBtn = document.getElementById("cart-float-btn");
     const cartBadge = document.getElementById("cart-badge");
@@ -175,16 +202,23 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function updateCartUI() {
-        cartItemsContainer.innerHTML = "";
+        cartItemsContainer.textContent = "";
         
         let totalItems = 0;
         let totalPrice = 0;
 
         if (cart.length === 0) {
-            cartItemsContainer.innerHTML = `<div class="cart-empty"><p>Sepetiniz boş</p></div>`;
+            const emptyDiv = document.createElement("div");
+            emptyDiv.className = "cart-empty";
+            const emptyText = document.createElement("p");
+            emptyText.textContent = "Sepetiniz boş";
+            emptyDiv.appendChild(emptyText);
+            cartItemsContainer.appendChild(emptyDiv);
+
             checkoutBtn.disabled = true;
-            cartBadge.style.display = "none";
-            cartTotalPrice.innerText = "₺0";
+            cartBadge.classList.remove("show");
+            cartTotalPrice.textContent = "₺0";
+            localStorage.setItem("ulusFirinCart", JSON.stringify(cart));
             return;
         }
 
@@ -197,27 +231,58 @@ document.addEventListener("DOMContentLoaded", function() {
             const itemDiv = document.createElement("div");
             itemDiv.className = "cart-item";
             
-            itemDiv.innerHTML = `
-                <div class="cart-item-info">
-                    <span class="cart-item-name">${item.name}</span>
-                    <span class="cart-item-price">₺${item.price * item.qty}</span>
-                </div>
-                <div class="cart-item-controls">
-                    <button class="qty-btn minus-btn">-</button>
-                    <span class="cart-item-qty">${item.qty}</span>
-                    <button class="qty-btn plus-btn">+</button>
-                    <button class="remove-btn">Sil</button>
-                </div>
-            `;
-            itemDiv.querySelector(".plus-btn").addEventListener("click", function() { changeQty(index, 1); });
-            itemDiv.querySelector(".minus-btn").addEventListener("click", function() { changeQty(index, -1); });
-            itemDiv.querySelector(".remove-btn").addEventListener("click", function() { removeItem(index); });
+            const infoDiv = document.createElement("div");
+            infoDiv.className = "cart-item-info";
+            
+            const nameSpan = document.createElement("span");
+            nameSpan.className = "cart-item-name";
+            nameSpan.textContent = item.name;
+            
+            const priceSpan = document.createElement("span");
+            priceSpan.className = "cart-item-price";
+            priceSpan.textContent = "₺" + (item.price * item.qty);
+
+            infoDiv.appendChild(nameSpan);
+            infoDiv.appendChild(priceSpan);
+
+            const controlsDiv = document.createElement("div");
+            controlsDiv.className = "cart-item-controls";
+
+            const minusBtn = document.createElement("button");
+            minusBtn.className = "qty-btn minus-btn";
+            minusBtn.textContent = "-";
+            minusBtn.addEventListener("click", function() { changeQty(index, -1); });
+
+            const qtySpan = document.createElement("span");
+            qtySpan.className = "cart-item-qty";
+            qtySpan.textContent = item.qty;
+
+            const plusBtn = document.createElement("button");
+            plusBtn.className = "qty-btn plus-btn";
+            plusBtn.textContent = "+";
+            plusBtn.addEventListener("click", function() { changeQty(index, 1); });
+
+            const removeBtn = document.createElement("button");
+            removeBtn.className = "remove-btn";
+            removeBtn.textContent = "Sil";
+            removeBtn.addEventListener("click", function() { removeItem(index); });
+
+            controlsDiv.appendChild(minusBtn);
+            controlsDiv.appendChild(qtySpan);
+            controlsDiv.appendChild(plusBtn);
+            controlsDiv.appendChild(removeBtn);
+
+            itemDiv.appendChild(infoDiv);
+            itemDiv.appendChild(controlsDiv);
 
             cartItemsContainer.appendChild(itemDiv);
         });
-        cartBadge.innerText = totalItems;
-        cartBadge.style.display = "flex";
-        cartTotalPrice.innerText = "₺" + totalPrice;
+
+        cartBadge.textContent = totalItems;
+        cartBadge.classList.add("show");
+        cartTotalPrice.textContent = "₺" + totalPrice;
+        
+        localStorage.setItem("ulusFirinCart", JSON.stringify(cart));
     }
 
     const orderModal = document.getElementById("order-modal");
@@ -228,15 +293,28 @@ document.addEventListener("DOMContentLoaded", function() {
     checkoutBtn.addEventListener("click", function() {
         toggleCart();
         
-        let summaryText = "<strong>Sipariş Özeti:</strong><br/>";
+        orderSummaryBox.textContent = "";
+        
+        const summaryTitle = document.createElement("strong");
+        summaryTitle.textContent = "Sipariş Özeti:";
+        orderSummaryBox.appendChild(summaryTitle);
+        orderSummaryBox.appendChild(document.createElement("br"));
+
         let total = 0;
         cart.forEach(function(item) {
-            summaryText += `${item.qty}x ${item.name} - ₺${item.price * item.qty}<br/>`;
+            const itemLine = document.createElement("span");
+            itemLine.textContent = item.qty + "x " + item.name + " - ₺" + (item.price * item.qty);
+            orderSummaryBox.appendChild(itemLine);
+            orderSummaryBox.appendChild(document.createElement("br"));
             total += (item.price * item.qty);
         });
-        summaryText += `<br/><strong>Genel Toplam: ₺${total}</strong>`;
+
+        orderSummaryBox.appendChild(document.createElement("br"));
         
-        orderSummaryBox.innerHTML = summaryText;
+        const totalLine = document.createElement("strong");
+        totalLine.textContent = "Genel Toplam: ₺" + total;
+        orderSummaryBox.appendChild(totalLine);
+
         orderModal.classList.add("open");
     });
 
@@ -268,7 +346,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const successName = document.getElementById("success-name");
 
     function showSuccess(customerName) {
-        successName.innerText = "Teşekkürler, " + customerName + "!";
+        successName.textContent = "Teşekkürler, " + customerName + "!";
         successModal.classList.add("open");
     }
 
@@ -279,13 +357,23 @@ document.addEventListener("DOMContentLoaded", function() {
     const toastDiv = document.getElementById("toast");
 
     function showToast(message, isError) {
-        toastDiv.innerHTML = message;
+        toastDiv.textContent = "";
         
+        const icon = document.createElement("i");
         if (isError) {
             toastDiv.classList.add("toast-error");
+            icon.className = "fas fa-exclamation-circle";
         } else {
             toastDiv.classList.remove("toast-error");
+            icon.className = "fas fa-check-circle";
         }
+        icon.style.marginRight = "8px";
+        
+        const textSpan = document.createElement("span");
+        textSpan.textContent = message;
+
+        toastDiv.appendChild(icon);
+        toastDiv.appendChild(textSpan);
 
         toastDiv.classList.add("show");
 
